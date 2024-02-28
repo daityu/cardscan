@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Identity Card Photo Capture</title>
+<style>
+  #cameraGuide {
+    width: 300px;
+    height: 200px;
+    border: 2px dashed #00FF00;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  video, canvas {
+    width: 100%;
+    height: auto;
+  }
+</style>
+</head>
+<body>
+
+<video id="video" autoplay></video>
+<div id="cameraGuide"></div>
+<button id="captureBtn">Capture Photo</button>
+<canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+
+<script>
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const captureBtn = document.getElementById('captureBtn');
+  const context = canvas.getContext('2d');
+  const constraints = { video: { width: 640, height: 480 } };
+
+  // Access the device camera and stream to video element
+  navigator.mediaDevices.getUserMedia(constraints)
+    .then(function(stream) {
+      video.srcObject = stream;
+    })
+    .catch(function(error) {
+      console.error("Error accessing the camera", error);
+    });
+
+  // Capture the photo
+  captureBtn.addEventListener('click', function() {
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageDataURL = canvas.toDataURL('image/png');
+
+    // You can now use `imageDataURL` for further processing (e.g., upload to server, etc.)
+    console.log(imageDataURL);
+  });
+</script>
+
+</body>
+</html>
