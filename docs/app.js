@@ -50,6 +50,88 @@ document.addEventListener("DOMContentLoaded", function () {
         };
         reader.readAsDataURL(file);
     });
+
+    // 付箋紙のメモを作成する関数
+    function addStickyNote(text) {
+        // メモのテキストを作成
+        var text = new fabric.IText(text, {
+            left: 100,
+            top: 100,
+            fontFamily: 'arial',
+            fill: '#000',
+            fontSize: 14,
+            backgroundColor: '#ffeb3b' // 付箋紙の色（黄色）
+        });
+
+        // メモをキャンバスに追加
+        canvas.add(text);
+
+        // メモを選択可能にする
+        text.set({
+            borderColor: 'red',
+            cornerColor: 'green',
+            cornerSize: 6,
+            transparentCorners: false
+        });
+
+        // キャンバスを再描画
+        canvas.renderAll();
+    }
+
+    // 保存ボタンがクリックされた場合にトリミングを実行する例
+    document.getElementById('putmemo').addEventListener("click", function () {
+        // テキストエリアからテキストを取得
+        var memoElement = document.getElementById('memo');
+        var memoText = memoElement.value; // テキストエリアの値を取得
+        console.log(memoText); // コンソールにテキストを表示
+
+        // 付箋紙のメモをキャンバスに追加する
+        addStickyNote(memoText);
+    });
+
+
+    // 書類画像の上に半透明のマーカー線を追加する関数
+    function addTransparentLine() {
+        // 線の始点と終点の座標（例えば x1, y1, x2, y2）
+        var x1 = 50, y1 = 200, x2 = 200, y2 = 200;
+
+        // 半透明の線を作成
+        var line = new fabric.Line([x1, y1, x2, y2], {
+            stroke: 'rgba(255,0,0,0.5)', // 赤色で半透明の線
+            strokeWidth: 5,             // 線の太さ
+            selectable: true            // 選択不可能に設定（必要に応じて変更）
+        });
+
+        // 線をキャンバスに追加
+        canvas.add(line);
+
+        // キャンバスを再描画
+        canvas.renderAll();
+    }
+    // 保存ボタンがクリックされた場合にトリミングを実行する例
+    document.getElementById('putmarker').addEventListener("click", function () {
+        // キャンバスが準備できたら、上記の関数を呼び出して線を追加
+        addTransparentLine();
+    });
+
+    // キーボードイベントのリスナーを追加
+    document.addEventListener('keydown', function (e) {
+        // 'Delete' キーの keyCode は 46
+        if (e.keyCode == 46) {
+            // 選択されているオブジェクトを取得
+            var activeObject = canvas.getActiveObject();
+
+            // もしオブジェクトが選択されていれば削除
+            if (activeObject) {
+                canvas.remove(activeObject);
+
+                // キャンバスを再描画
+                canvas.renderAll();
+            }
+        }
+    });
+
+
 });
 
 // キャンバス全体をトリミングして新しいキャンバスに描画する関数
