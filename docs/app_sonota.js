@@ -8,29 +8,29 @@ document.addEventListener("DOMContentLoaded", function () {
         canvas.setDimensions({ width: e.width, height: e.height })
         canvas.renderAll()
     });
-    // 免許証の写真をアップロードしてCanvasに追加する
-    document.getElementById('upload').addEventListener("change", function (e) {
-        var file = e.target.files[0];
-        var reader = new FileReader();
+    // // 免許証の写真をアップロードしてCanvasに追加する
+    // document.getElementById('upload').addEventListener("change", function (e) {
+    //     var file = e.target.files[0];
+    //     var reader = new FileReader();
 
-        reader.onload = function (f) {
-            var data = f.target.result;
-            fabric.Image.fromURL(data, function (img) {
-                // アスペクト比を保ちながら免許証のサイズに合わせる
-                var oImg = img.set({ left: 50, top: 50, angle: 0 }).scaleToWidth(300);
-                canvas.add(oImg).renderAll();
+    //     reader.onload = function (f) {
+    //         var data = f.target.result;
+    //         fabric.Image.fromURL(data, function (img) {
+    //             // アスペクト比を保ちながら免許証のサイズに合わせる
+    //             var oImg = img.set({ left: 50, top: 50, angle: 0 }).scaleToWidth(300);
+    //             canvas.add(oImg).renderAll();
 
-                // キャンバス上での操作（移動・拡大縮小）を可能にする
-                oImg.setControlsVisibility({
-                    mt: false, // middle top controlを非表示
-                    mb: false, // middle bottom controlを非表示
-                    ml: false, // middle left controlを非表示
-                    mr: false, // middle right controlを非表示
-                });
-            });
-        };
-        reader.readAsDataURL(file);
-    });
+    //             // キャンバス上での操作（移動・拡大縮小）を可能にする
+    //             oImg.setControlsVisibility({
+    //                 mt: false, // middle top controlを非表示
+    //                 mb: false, // middle bottom controlを非表示
+    //                 ml: false, // middle left controlを非表示
+    //                 mr: false, // middle right controlを非表示
+    //             });
+    //         });
+    //     };
+    //     reader.readAsDataURL(file);
+    // });
 
     // 付箋紙のメモを作成する関数
     function addStickyNote(text) {
