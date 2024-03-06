@@ -14,14 +14,17 @@
 
 <body>
 
-    <input type="file" id="upload" />
+    <!-- <input type="file" id="upload" /> -->
     <canvas id="c" width="800" height="600"></canvas>
-    <button id="save">切り抜き保存</button>
-    <canvas id="c2" width="252" height="157"></canvas>
-    <textarea id="memo" rows="5">ここにメモを追加してください。</textarea>
+    <textarea id="memo" cols=30 rows="5">ここにメモを追加してください。</textarea>
     <button id="putmemo">メモ追加</button>
+    <p>
     <button id="putmarker">マーカー追加</button>
-    <script src="app.js"></script>
+    <button id="putmask">マスク追加</button>
+    <button id="save">保存</button></p>
+    <p>JSON DATA</p>
+    <textarea cols=100 rows=5 id="jsondata"></textarea>
+    <script src="app_sonota.js"></script>
 </body>
 
 </html>
