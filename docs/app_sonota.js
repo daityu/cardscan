@@ -1,4 +1,5 @@
 //参考：https://zenn.dev/megeton/articles/aaad434c8533b6
+// http://fabricjs.com/docs/index.html
 
 document.addEventListener("DOMContentLoaded", function () {
     var canvas = new fabric.Canvas('c', { preserveObjectStacking: true });
