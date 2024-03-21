@@ -1,37 +1,55 @@
-<form id="uploadForm" enctype="multipart/form-data">
-    <input type="file" name="file" required>
-    <input type="submit" value="Upload">
-</form>
+<!DOCTYPE html>
+<html lang="ja">
 
-<!-- アップロードされた画像がここに表示されます -->
-<img id="uploadedImage" src="" alt="Uploaded Image will appear here." style="max-width: 500px;"/>
+<head>
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+</head>
 
-<script>
-document.getElementById('uploadForm').addEventListener('submit', function(event) {
-    event.preventDefault(); // デフォルトのフォーム送信を防止
-    var file = this.file.files[0]; // 選択されたファイルを取得
+<body>
+    <h2>保険証画像をマスクします</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <input type="submit" value="Upload">
+    </form>
 
-    // ファイルが選択されていない場合は警告を表示
-    if (!file) {
-        alert("ファイルを選択してください！");
-        return;
-    }
+    <!-- アップロードされた画像がここに表示されます -->
+    <img id="uploadedImage" src="" alt="Uploaded Image will appear here." style="max-width: 500px;" />
 
-    // アップロードするファイルの名前をURLに追加
-    const url = 'https://182pvptd94.execute-api.ap-northeast-1.amazonaws.com/V1/' + encodeURIComponent(file.name);
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // デフォルトのフォーム送信を防止
+            var file = this.file.files[0]; // 選択されたファイルを取得
 
-    fetch(url, {
-        method: 'PUT',
-        body: file,
-        headers: {
-            'Content-Type': 'image/jpeg' // 送信するファイルの種類を指定
-        }
-    })
-    .then(response => response.json()) // レスポンスをJSONとして解析
-    .then(data => {
-        // `<img>`タグの`src`属性をアップロード後のURLに設定
-        // document.getElementById('uploadedImage').src = data.url;
-    })
-    .catch(error => console.error(error)); // エラーが発生した場合はコンソールに出力
-});
-</script>
+            if (!file) {
+                alert("ファイルを選択してください！");
+                return;
+            }
+
+            // API エンドポイントは固定値や設定から取得するべきです
+            const url = 'https://182pvptd94.execute-api.ap-northeast-1.amazonaws.com/V1/' + encodeURIComponent(file.name);
+
+            fetch(url, {
+                method: 'PUT',
+                body: file,
+                headers: {
+                    'Content-Type': file.type || 'application/octet-stream'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.url) {
+                        document.getElementById('uploadedImage').src = data.url;
+                    } else {
+                        // 適切なエラーハンドリングをここに追加
+                        alert("ファイルのアップロードに失敗しました。");
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                    alert("エラーが発生しました：" + error.message);
+                });
+        });
+    </script>
+</body>
+
+</html>
