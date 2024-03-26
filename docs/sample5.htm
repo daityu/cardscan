@@ -36,7 +36,7 @@
                 alert("ファイルを選択してください！");
                 return;
             }
-            var _filename = file.name || generateGUID();
+            var _filename = generateGUID();
             // API エンドポイントは固定値や設定から取得するべきです
             const url = 'https://182pvptd94.execute-api.ap-northeast-1.amazonaws.com/V1/' + encodeURIComponent(_filename);
 
@@ -51,7 +51,7 @@
                 .then(data => {
                     if (data && data.url) {
                         setTimeout(function () {
-                            var _url = "https://oonakaoutput.s3.ap-northeast-1.amazonaws.com/card/" + file.name;
+                            var _url = "https://oonakaoutput.s3.ap-northeast-1.amazonaws.com/card/" + _filename;
                             document.getElementById('uploadedImage').src = _url;
                         }, 4000);
                     } else {
