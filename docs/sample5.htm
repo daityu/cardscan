@@ -23,6 +23,11 @@
                 return v.toString(16);
             });
         }
+        document.getElementById('uploadedImage').addEventListener('click', function () {
+            var imageUrl = document.getElementById('uploadedImage').getAttribute('src');
+            document.getElementById('uploadedImage').src = "";
+            document.getElementById('uploadedImage').src = imageUrl;
+        });
         document.getElementById('uploadForm').addEventListener('submit', function (event) {
             event.preventDefault(); // デフォルトのフォーム送信を防止
             var file = this.file.files[0]; // 選択されたファイルを取得
