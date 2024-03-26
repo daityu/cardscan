@@ -9,7 +9,7 @@
     <h2>保険証画像をマスクします</h2>
     <p>ファイルを選択し、アップロードボタンを押下</p>
     <form id="uploadForm" enctype="multipart/form-data">
-        <input type="file" name="file" required>
+        <input type="file" name="file" accept="image/*">
         <input type="submit" value="アップロード">
     </form>
 
@@ -17,6 +17,12 @@
     <img id="uploadedImage" src="" alt="Uploaded Image will appear here." style="max-width: 500px;" />
 
     <script>
+        function generateGUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
         document.getElementById('uploadForm').addEventListener('submit', function (event) {
             event.preventDefault(); // デフォルトのフォーム送信を防止
             var file = this.file.files[0]; // 選択されたファイルを取得
@@ -25,9 +31,9 @@
                 alert("ファイルを選択してください！");
                 return;
             }
-
+            var _filename = file.name || generateGUID();
             // API エンドポイントは固定値や設定から取得するべきです
-            const url = 'https://182pvptd94.execute-api.ap-northeast-1.amazonaws.com/V1/' + encodeURIComponent(file.name);
+            const url = 'https://182pvptd94.execute-api.ap-northeast-1.amazonaws.com/V1/' + encodeURIComponent(_filename);
 
             fetch(url, {
                 method: 'PUT',
