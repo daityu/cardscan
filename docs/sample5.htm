@@ -66,7 +66,7 @@
     </form>
 
     <!-- アップロードされた画像がここに表示されます -->
-    <img id="uploadedImage" src="" alt="アップロード後、画像が切り替わらない場合はクリックしてください" />
+    <img id="uploadedImage" src="" alt="処理後画像" />
 
     <script>
         // GUIDを生成する関数
@@ -76,7 +76,26 @@
                 return v.toString(16);
             });
         }
+        function loadImageWithRetry(filename, retryDelay) {
+            // 画像URLの生成
+            var imageUrl = "https://oonakaoutput.s3.ap-northeast-1.amazonaws.com/card/" + filename;
 
+            // 画像要素の取得
+            var imageElement = document.getElementById('uploadedImage');
+
+            // onerrorハンドラの設定
+            imageElement.onerror = function () {
+                console.log("画像の読み込みに失敗しました。リトライします。");
+
+                // 指定された時間後に再度画像を読み込む
+                setTimeout(function () {
+                    imageElement.src = imageUrl;
+                }, retryDelay);
+            };
+
+            // 初回の画像読み込みを開始
+            imageElement.src = imageUrl;
+        }
         // ファイル選択時のラベル変更
         document.getElementById('fileInput').addEventListener('change', function () {
             var file = event.target.files[0];
@@ -90,13 +109,6 @@
             };
             reader.readAsDataURL(file);
 
-        });
-
-        // 画像クリックで再読み込み
-        document.getElementById('uploadedImage').addEventListener('click', function () {
-            var imageUrl = this.getAttribute('src');
-            this.src = "";
-            this.src = imageUrl;
         });
 
         // フォーム提出時の処理
@@ -123,9 +135,8 @@
                 .then(data => {
                     if (data && data.url) {
                         setTimeout(function () {
-                            var imageUrl = "https://oonakaoutput.s3.ap-northeast-1.amazonaws.com/card/" + filename;
-                            document.getElementById('uploadedImage').src = imageUrl;
-                        }, 4000);
+                            loadImageWithRetry(filename, 1000);
+                        }, 4000)
                     } else {
                         alert("ファイルのアップロードに失敗しました。");
                     }
