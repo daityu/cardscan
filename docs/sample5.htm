@@ -2,43 +2,90 @@
 <html lang="ja">
 
 <head>
+    <meta charset="UTF-8">
     <meta name="referrer" content="no-referrer-when-downgrade" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* 共通ボタンスタイル */
+        .button {
+            font-size: 16px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        /* ファイルアップロードボタンのスタイル */
+        .file-upload-btn {
+            background-color: #f2f2f2;
+            display: inline-block;
+        }
+
+        /* ファイル選択フィールドを隠す */
+        .file-upload-btn input[type="file"] {
+            display: none;
+        }
+
+        /* 提出ボタンのスタイル */
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+
+        /* ホバー時のスタイル */
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* アップロード後の画像表示スタイル */
+        #uploadedImage {
+            max-width: 500px;
+        }
+    </style>
 </head>
 
 <body>
     <h2>保険証画像をマスクします</h2>
     <p>ファイルを選択し、アップロードボタンを押下</p>
     <form id="uploadForm" enctype="multipart/form-data">
-        <input type="file" name="file" accept="image/*">
-        <input type="submit" value="アップロード">
+        <label class="file-upload-btn button">ファイルを選択
+            <input type="file" name="file" accept="image/*">
+        </label>
+        <input type="submit" value="アップロード" class="submit-btn button">
     </form>
 
     <!-- アップロードされた画像がここに表示されます -->
-    <img id="uploadedImage" src="" alt="アップロード後、画像が切り替わらない場合はクリックしてください" style="max-width: 500px;" />
+    <img id="uploadedImage" src="" alt="アップロード後、画像が切り替わらない場合はクリックしてください" />
 
     <script>
+        // GUIDを生成する関数
         function generateGUID() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
         }
+
+        // 画像クリックで再読み込み
         document.getElementById('uploadedImage').addEventListener('click', function () {
-            var imageUrl = document.getElementById('uploadedImage').getAttribute('src');
-            document.getElementById('uploadedImage').src = "";
-            document.getElementById('uploadedImage').src = imageUrl;
+            var imageUrl = this.getAttribute('src');
+            this.src = "";
+            this.src = imageUrl;
         });
+
+        // フォーム提出時の処理
         document.getElementById('uploadForm').addEventListener('submit', function (event) {
             event.preventDefault(); // デフォルトのフォーム送信を防止
-            var file = this.file.files[0]; // 選択されたファイルを取得
+            var file = this.elements.file.files[0]; // 選択されたファイルを取得
 
             if (!file) {
                 alert("ファイルを選択してください！");
                 return;
             }
-            var _filename = generateGUID();
+            var filename = generateGUID();
             // API エンドポイントは固定値や設定から取得するべきです
-            const url = 'https://182pvptd94.execute-api.ap-northeast-1.amazonaws.com/V1/' + encodeURIComponent(_filename);
+            const url = 'https://182pvptd94.execute-api.ap-northeast-1.amazonaws.com/V1/' + encodeURIComponent(filename);
 
             fetch(url, {
                 method: 'PUT',
@@ -51,11 +98,10 @@
                 .then(data => {
                     if (data && data.url) {
                         setTimeout(function () {
-                            var _url = "https://oonakaoutput.s3.ap-northeast-1.amazonaws.com/card/" + _filename;
-                            document.getElementById('uploadedImage').src = _url;
+                            var imageUrl = "https://oonakaoutput.s3.ap-northeast-1.amazonaws.com/card/" + filename;
+                            document.getElementById('uploadedImage').src = imageUrl;
                         }, 4000);
                     } else {
-                        // 適切なエラーハンドリングをここに追加
                         alert("ファイルのアップロードに失敗しました。");
                     }
                 })
