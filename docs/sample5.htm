@@ -42,6 +42,14 @@
         #uploadedImage {
             max-width: 500px;
         }
+
+        /* ここに必要なスタイルを追加してください */
+        #thumbnail {
+            max-width: 100px;
+            /* サムネイルの最大幅を指定 */
+            max-height: 100px;
+            /* サムネイルの最大高さを指定 */
+        }
     </style>
 </head>
 
@@ -49,9 +57,11 @@
     <h2>保険証画像をマスクします</h2>
     <p>ファイルを選択し、アップロードボタンを押下</p>
     <form id="uploadForm" enctype="multipart/form-data">
-        <label class="file-upload-btn button">ファイルを選択
-            <input type="file" name="file" accept="image/*">
+        <label class="file-upload-btn button" id="fileLabel">ファイルを選択
+            <input type="file" name="file" accept="image/*" id="fileInput">
         </label>
+        <!-- 選択された画像のサムネイルを表示するためのimgタグ -->
+        <img id="thumbnail" src="" alt="選択された画像のサムネイル" style="display:none;">
         <input type="submit" value="アップロード" class="submit-btn button">
     </form>
 
@@ -66,6 +76,21 @@
                 return v.toString(16);
             });
         }
+
+        // ファイル選択時のラベル変更
+        document.getElementById('fileInput').addEventListener('change', function () {
+            var file = event.target.files[0];
+            if (!file.type.startsWith('image/')) { return }
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var thumbnail = document.getElementById('thumbnail');
+                thumbnail.src = e.target.result;
+                thumbnail.style.display = 'block'; // サムネイルを表示する
+            };
+            reader.readAsDataURL(file);
+
+        });
 
         // 画像クリックで再読み込み
         document.getElementById('uploadedImage').addEventListener('click', function () {
