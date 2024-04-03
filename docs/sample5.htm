@@ -54,9 +54,13 @@
 </head>
 
 <body>
-    <h2>保険証画像をマスクします</h2>
+    <h2>各種証明書をマスクします</h2>
     <p>ファイルを選択し、アップロードボタンを押下</p>
     <form id="uploadForm" enctype="multipart/form-data">
+        <select class="button" name="type" id="type-select">
+            <option value="card">保険証</option>
+            <option value="dl">運転免許証</option>
+        </select>
         <label class="file-upload-btn button" id="fileLabel">ファイルを選択
             <input type="file" name="file" accept="image/*" id="fileInput">
         </label>
@@ -77,8 +81,9 @@
             });
         }
         function loadImageWithRetry(filename, retryDelay) {
+            var type = document.getElementById("type-select");
             // 画像URLの生成
-            var imageUrl = "https://oonakaoutput.s3.ap-northeast-1.amazonaws.com/card/" + filename;
+            var imageUrl = "https://oonakaoutput.s3.ap-northeast-1.amazonaws.com/" + type.value + "/" + filename;
 
             // 画像要素の取得
             var imageElement = document.getElementById('uploadedImage');
