@@ -15,23 +15,32 @@
     <script>
         // ドキュメントが読み込まれた後にイベントリスナーを設定する
         document.addEventListener('DOMContentLoaded', function () {
-            // タッチムーブイベントに対するイベントリスナーを追加する
-            document.addEventListener(
-                'touchmove',
-                function (event) {
-                    // イベントのデフォルトの挙動を抑制する（ここではタッチによるスクロールを禁止）
-                    event.preventDefault();
-                },
-                { passive: false } // passiveオプションをfalseに設定して、preventDefaultが有効になるようにする
-            );
+            var maybePreventPullToRefresh = false;
+            var lastTouchY = 0;
+            var touchStartHandler = function (e) {
+                if (e.touches.length != 1) return;
+                lastTouchY = e.touches[0].clientY;
+                // タッチ開始時にプルダウンリフレッシュを防ぐかどうかを判断
+                maybePreventPullToRefresh = window.pageYOffset == 0;
+            }
 
-            // 引っ張りリロードを禁止するためのイベントリスナーを追加する
-            // この機能は一部のブラウザでサポートされている可能性がある
-            window.addEventListener('touchmove', function (event) {
-                if (event.scale !== 1) { event.preventDefault(); }
-            }, { passive: false });
+            var touchMoveHandler = function (e) {
+                var touchY = e.touches[0].clientY;
+                var touchYDelta = touchY - lastTouchY;
+                lastTouchY = touchY;
 
-            // ページ離脱時に確認ダイアログを表示するイベントリスナーを追加する
+                if (maybePreventPullToRefresh) {
+                    // ネガティブなスクロールを防ぐため、デフォルトの挙動を抑制する
+                    maybePreventPullToRefresh = false;
+                    if (touchYDelta > 0) {
+                        e.preventDefault();
+                        return;
+                    }
+                }
+            }
+            // イベントリスナーを追加
+            document.addEventListener('touchstart', touchStartHandler, { passive: false });
+            document.addEventListener('touchmove', touchMoveHandler, { passive: false });            // ページ離脱時に確認ダイアログを表示するイベントリスナーを追加する
             window.addEventListener('beforeunload', function (event) {
                 // 確認メッセージを設定する
                 var confirmationMessage = 'このページを離れますか？';
