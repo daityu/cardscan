@@ -1,32 +1,44 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- レスポンシブデザイン用のビューポート設定 -->
     <title>ページ離脱確認</title>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var isDirty = false; // ページ内で変更があったかどうかのフラグ
+        // ドキュメントが読み込まれた後にイベントリスナーを設定する
+        document.addEventListener('DOMContentLoaded', function () {
+            // タッチムーブイベントに対するイベントリスナーを追加する
+            document.addEventListener(
+                'touchmove',
+                function (event) {
+                    // イベントのデフォルトの挙動を抑制する（ここではタッチによるスクロールを禁止）
+                    event.preventDefault();
+                },
+                { passive: false } // passiveオプションをfalseに設定して、preventDefaultが有効になるようにする
+            );
 
-            // ここにページ内の変更を検出する処理を追加する
+            // 引っ張りリロードを禁止するためのイベントリスナーを追加する
+            // この機能は一部のブラウザでサポートされている可能性がある
+            window.addEventListener('touchmove', function(event) {
+                if (event.scale !== 1) { event.preventDefault(); }
+            }, { passive: false });
 
-            window.addEventListener('beforeunload', function (e) {
-                if (!isDirty) {
-                    return undefined; // 変更がなければ何もしない
-                }
-
-                var confirmationMessage = '変更が保存されていません。本当にこのページを離れますか？';
-
-                // 互換性のための処理（一部の古いブラウザ用）
-                (e || window.event).returnValue = confirmationMessage;
-
-                // 現代のブラウザは文字列を返すだけで良い
+            // ページ離脱時に確認ダイアログを表示するイベントリスナーを追加する
+            window.addEventListener('beforeunload', function (event) {
+                // 確認メッセージを設定する
+                var confirmationMessage = 'このページを離れますか？';
+                // イベントにメッセージを設定する（一部のブラウザではカスタムメッセージが無視される）
+                event.returnValue = confirmationMessage;
+                // 確認ダイアログを表示する
                 return confirmationMessage;
             });
         });
     </script>
 </head>
+
 <body>
     <p>このページから離れるときに確認ダイアログが表示されます。</p>
 </body>
+
 </html>
