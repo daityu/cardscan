@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ページ離脱確認</title>
+    <script>
+        window.addEventListener('beforeunload', function (e) {
+            // ダイアログのメッセージ設定
+            var confirmationMessage = '変更が保存されていません。本当にこのページを離れますか？';
+
+            // 互換性のための処理（一部の古いブラウザ用）
+            (e || window.event).returnValue = confirmationMessage;
+
+            // 現代のブラウザは文字列を返すだけで良い
+            return confirmationMessage;
+        });
+    </script>
+</head>
+<body>
+    <p>このページから離れるときに確認ダイアログが表示されます。</p>
+</body>
+</html>
