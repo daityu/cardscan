@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- レスポンシブデザイン用のビューポート設定 -->
+    <title>ページ離脱確認</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var isDirty = false; // ページ内で変更があったかどうかのフラグ
+
+            // ここにページ内の変更を検出する処理を追加する
+
+            window.addEventListener('beforeunload', function (e) {
+                if (!isDirty) {
+                    return undefined; // 変更がなければ何もしない
+                }
+
+                var confirmationMessage = '変更が保存されていません。本当にこのページを離れますか？';
+
+                // 互換性のための処理（一部の古いブラウザ用）
+                (e || window.event).returnValue = confirmationMessage;
+
+                // 現代のブラウザは文字列を返すだけで良い
+                return confirmationMessage;
+            });
+        });
+    </script>
+</head>
+<body>
+    <p>このページから離れるときに確認ダイアログが表示されます。</p>
+</body>
+</html>
