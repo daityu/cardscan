@@ -6,13 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- レスポンシブデザイン用のビューポート設定 -->
     <title>ページ離脱確認</title>
     <style>
+        /* ①CSSによる制限 */
         /* https://www.tohoho-web.com/css/prop/touch-action.htm */
         body {
-            /* overscroll-behavior-y: contain; */
-            /* touch-action: none; */
+            overscroll-behavior-y: contain;
+            touch-action: none;
         }
     </style>
     <script>
+        // ②イベントによる制限
         // ドキュメントが読み込まれた後にイベントリスナーを設定する
         document.addEventListener('DOMContentLoaded', function () {
             var maybePreventPullToRefresh = false;
